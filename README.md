@@ -36,3 +36,6 @@ python demo_client.py <job_id>
 ```
 where `<job_id>` is replaced with the integer job id from HySEA. 
 The script has been tested with job_id `16761`.
+
+When the script finishes, it will print the service response, and construct
+a URL to the generated report available for download.

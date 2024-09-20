@@ -1,4 +1,5 @@
 #!/usr/bin/env python
+import ast
 import time
 import pika
 import uuid
@@ -60,16 +61,25 @@ class Receiver(object):
         return self.response
 
 
+def create_url_with_auth(url: str, sas_token: str) -> str:
+    return f"{url}?{SAS_TOKEN}"
+
+
 if __name__ == "__main__":
     parser = argparse.ArgumentParser()
     parser.add_argument('hysea_id')
     args = parser.parse_args()
 
+    t0 = time.perf_counter()
     receiver = Receiver()
 
     response = receiver.call(args.hysea_id)
     print("%r" % response)
+    t1 = time.perf_counter()
+    print(f"Execution time: {t1 - t0} seconds")
 
     parsed_response = urllib.parse.parse_qs(response)
-    print(f"Result path: {parsed_response[b'result_path'][0].decode()}?{SAS_TOKEN}")
-
+    result_paths = ast.literal_eval(parsed_response[b'result_paths'][0].decode())
+    print("Results paths:")
+    for p in result_paths:
+        print(create_url_with_auth(p, SAS_TOKEN))

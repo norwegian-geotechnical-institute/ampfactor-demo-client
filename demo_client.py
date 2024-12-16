@@ -27,6 +27,7 @@ class Receiver(object):
             SERVER_URL, 5672, SERVER_VHOST, self.credentials, heartbeat=5))
         self.channel = self.connection.channel()
 
+        self.channel.queue_declare(queue=CLIENT_QUEUE, durable=True, exclusive=False, auto_delete=False)
         self.channel.basic_consume(queue=CLIENT_QUEUE,
                                    on_message_callback=self.on_response,
                                    auto_ack=True)
